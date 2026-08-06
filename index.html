@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Access to EU Funds — BI-REX × Università di Palermo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CONFIG: imposta SUBMIT_ENDPOINT in fondo al file (Power
+   Automate HTTP trigger / Formspree / Apps Script).
+   Vuoto = modalità demo (nessun invio, payload in console).
+   ============================================================ */
+:root{
+  /* BI-REX */
+  --bordeaux:#7D1F2E;
+  --bordeaux-deep:#571522;
+  --lime:#AFCB2E;
+  --lime-soft:#EEF4CF;
+  /* UniPa */
+  --unipa-blue:#0E4C7C;
+  --unipa-blue-deep:#0A3357;
+  --unipa-orange:#E37222;
+  --unipa-blue-soft:#E3EEF7;
+  /* neutrals */
+  --paper:#F7F6F2;
+  --ink:#26222A;
+  --ink-soft:#6B6470;
+  --card:#FFFFFF;
+  --line:#E3DFDA;
+  --shadow:0 2px 14px rgba(14,76,124,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Public Sans',system-ui,sans-serif;
+  background:var(--paper);color:var(--ink);line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ---------- BRAND BAR ---------- */
+.brandbar{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:14px 24px;position:sticky;top:0;z-index:50;
+}
+.brandbar-inner{
+  max-width:1080px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.brand-group{display:flex;align-items:center;gap:18px}
+.brandbar img{height:42px;width:auto;display:block}
+.brandbar img.unipa{height:52px}
+.brand-x{
+  font-family:'Archivo',sans-serif;font-variation-settings:'wght' 300;
+  font-size:20px;color:var(--ink-soft);
+}
+.brand-fallback{
+  display:none;font-family:'Archivo',sans-serif;font-variation-settings:'wght' 800;
+  font-size:16px;letter-spacing:.02em;
+}
+.brand-fallback.birex{color:var(--bordeaux)}
+.brand-fallback.unipa{color:var(--unipa-blue)}
+.brand-tag{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-soft);text-align:right;line-height:1.5;
+}
+@media(max-width:620px){
+  .brand-tag{display:none}
+  .brandbar img{height:34px}.brandbar img.unipa{height:42px}
+}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;color:#fff;overflow:hidden;padding:0 24px 120px;
+  background:linear-gradient(118deg,var(--bordeaux-deep) 0%,var(--bordeaux) 38%,#5F2A44 58%,var(--unipa-blue-deep) 100%);
+}
+.hero-inner{max-width:1080px;margin:0 auto;position:relative;z-index:2;padding-top:64px}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--lime);margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.eyebrow::before{content:"";display:block;width:34px;height:2px;background:var(--lime)}
+.eyebrow .sep{color:var(--unipa-orange)}
+h1{
+  font-family:'Archivo',sans-serif;
+  font-variation-settings:'wdth' 115,'wght' 850;
+  font-size:clamp(42px,7.5vw,84px);
+  line-height:.98;letter-spacing:-.015em;max-width:12ch;
+}
+h1 .thin{
+  font-variation-settings:'wdth' 82,'wght' 300;display:block;
+  font-size:.4em;letter-spacing:.02em;margin-top:16px;color:rgba(255,255,255,.88);
+}
+.hero-sub{max-width:58ch;margin-top:26px;font-size:17px;color:rgba(255,255,255,.9)}
+.hero-sub strong{color:var(--lime)}
+.hero-meta{
+  display:flex;gap:26px;margin-top:30px;flex-wrap:wrap;
+}
+.hm{display:flex;flex-direction:column;gap:2px}
+.hm b{font-family:'Archivo',sans-serif;font-variation-settings:'wght' 800;font-size:22px;color:var(--lime)}
+.hm span{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:12px;margin-top:38px;
+  background:var(--lime);color:var(--bordeaux-deep);
+  font-family:'Archivo',sans-serif;font-variation-settings:'wght' 750;font-size:16px;
+  padding:17px 32px;border-radius:999px;border:none;cursor:pointer;text-decoration:none;
+  transition:transform .18s ease, box-shadow .18s ease;box-shadow:0 8px 26px rgba(0,0,0,.28);
+}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,.34)}
+.hero-cta .mono{font-size:11px;font-weight:500;opacity:.75}
+.waves{position:absolute;left:0;right:0;bottom:-8px;height:230px;z-index:1;pointer-events:none}
+.waves path{fill:none;stroke:var(--lime);stroke-width:1.2;opacity:.9}
+.waves path.orange{stroke:var(--unipa-orange);opacity:.75}
+@media (prefers-reduced-motion:no-preference){
+  .waves path{stroke-dasharray:2600;stroke-dashoffset:2600;animation:draw 3.2s ease forwards}
+  .waves path:nth-child(2){animation-delay:.14s}
+  .waves path:nth-child(3){animation-delay:.28s}
+  .waves path:nth-child(4){animation-delay:.42s}
+  .waves path:nth-child(5){animation-delay:.56s}
+  .waves path:nth-child(6){animation-delay:.7s}
+  .waves path:nth-child(7){animation-delay:.84s}
+  @keyframes draw{to{stroke-dashoffset:0}}
+}
+
+/* ---------- FASI ---------- */
+.phases{max-width:1080px;margin:-72px auto 0;padding:0 24px;position:relative;z-index:3}
+.phases-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.phase{
+  background:var(--card);border-radius:16px;padding:24px 20px 22px;
+  box-shadow:var(--shadow);transition:transform .18s ease, box-shadow .18s ease;
+  border-top:4px solid var(--lime);position:relative;
+}
+.phase:nth-child(even){border-top-color:var(--unipa-orange)}
+.phase:hover{transform:translateY(-5px);box-shadow:0 10px 26px rgba(14,76,124,.16)}
+.phase .num{
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--unipa-blue);
+  letter-spacing:.15em;text-transform:uppercase;
+}
+.phase h3{
+  font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 105,'wght' 780;
+  font-size:17px;margin:9px 0 8px;color:var(--bordeaux-deep);line-height:1.2;
+}
+.phase p{font-size:13.5px;color:var(--ink-soft)}
+@media(max-width:840px){.phases-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.phases-grid{grid-template-columns:1fr}}
+
+.intro-note{
+  max-width:740px;margin:46px auto 0;padding:0 24px;text-align:center;
+  color:var(--ink-soft);font-size:15.5px;
+}
+.intro-note strong{color:var(--unipa-blue)}
+
+/* ---------- FORM ---------- */
+.form-wrap{max-width:740px;margin:58px auto 90px;padding:0 24px}
+.progress-shell{margin-bottom:12px}
+.progress-track{height:5px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress-fill{
+  height:100%;width:25%;border-radius:99px;
+  background:linear-gradient(90deg,var(--bordeaux),var(--unipa-orange),var(--lime));
+  transition:width .35s ease;
+}
+.progress-label{
+  display:flex;justify-content:space-between;margin-top:8px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.pipeline{display:flex;margin:20px 0 28px}
+.pipe-step{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+.pipe-step::before{content:"";position:absolute;top:15px;left:-50%;width:100%;height:2px;background:var(--line);z-index:0}
+.pipe-step:first-child::before{display:none}
+.pipe-step.done::before,.pipe-step.active::before{background:var(--lime)}
+.pipe-dot{
+  width:32px;height:32px;border-radius:50%;background:var(--paper);
+  border:2px solid var(--line);z-index:1;display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);transition:all .25s ease;
+}
+.pipe-step.active .pipe-dot{background:var(--bordeaux);border-color:var(--bordeaux);color:#fff;transform:scale(1.18);box-shadow:0 0 0 5px rgba(125,31,46,.14)}
+.pipe-step.done .pipe-dot{background:var(--lime);border-color:var(--lime);color:var(--bordeaux-deep)}
+.pipe-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);text-align:center}
+.pipe-step.active .pipe-label{color:var(--bordeaux);font-weight:700}
+@media(max-width:560px){.pipe-label{display:none}}
+
+.card{
+  background:var(--card);border-radius:20px;box-shadow:var(--shadow);
+  padding:38px 36px;border:1px solid var(--line);
+}
+@media(max-width:560px){.card{padding:26px 20px}}
+.step{display:none;animation:fadeIn .35s ease}
+.step.visible{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  .step{animation:none}
+  .waves path{animation:none;stroke-dashoffset:0}
+  .phase,.hero-cta,.btn{transition:none}
+}
+
+.step-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--unipa-orange);margin-bottom:6px}
+.step h2{
+  font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 108,'wght' 800;
+  font-size:26px;color:var(--bordeaux-deep);margin-bottom:6px;
+}
+.step .lead{color:var(--ink-soft);font-size:14.5px;margin-bottom:26px}
+
+.field{margin-bottom:24px}
+label.flabel{display:block;font-weight:600;font-size:14.5px;margin-bottom:9px}
+label.flabel .opt{font-weight:400;color:var(--ink-soft);font-size:12.5px}
+input[type=text],input[type=email],select,textarea{
+  width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:11px;
+  font-family:inherit;font-size:15px;background:#fff;color:var(--ink);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--unipa-blue);box-shadow:0 0 0 3px rgba(14,76,124,.14)}
+textarea{resize:vertical;min-height:90px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip span{
+  display:inline-block;padding:9px 16px;border:1.5px solid var(--line);border-radius:999px;
+  font-size:13.5px;cursor:pointer;background:#fff;transition:all .15s ease;user-select:none;
+}
+.chip input:checked + span{background:var(--bordeaux);border-color:var(--bordeaux);color:#fff}
+.chip input:focus-visible + span{box-shadow:0 0 0 3px rgba(125,31,46,.28)}
+.chip span:hover{border-color:var(--bordeaux)}
+.chips.blue .chip input:checked + span{background:var(--unipa-blue);border-color:var(--unipa-blue);color:#fff}
+.chips.blue .chip span:hover{border-color:var(--unipa-blue)}
+.chips.blue .chip input:focus-visible + span{box-shadow:0 0 0 3px rgba(14,76,124,.28)}
+.chips.lime .chip input:checked + span{background:var(--lime);border-color:var(--lime);color:var(--bordeaux-deep);font-weight:600}
+.chips.lime .chip span:hover{border-color:var(--lime)}
+
+/* radio cards */
+.rcards{display:grid;gap:10px}
+.rcard{position:relative;display:block}
+.rcard input{position:absolute;opacity:0}
+.rcard > div{
+  border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;cursor:pointer;
+  transition:all .15s ease;background:#fff;
+}
+.rcard b{display:block;font-size:14.5px;margin-bottom:2px}
+.rcard small{color:var(--ink-soft);font-size:12.5px}
+.rcard input:checked + div{border-color:var(--unipa-blue);background:var(--unipa-blue-soft);box-shadow:0 0 0 1px var(--unipa-blue)}
+.rcard input:focus-visible + div{box-shadow:0 0 0 3px rgba(14,76,124,.28)}
+
+/* slider */
+.slider-row{display:flex;align-items:center;gap:16px}
+input[type=range]{flex:1;accent-color:var(--unipa-blue);height:32px}
+.slider-val{
+  font-family:'Archivo',sans-serif;font-variation-settings:'wght' 850;
+  font-size:32px;color:var(--unipa-blue);min-width:36px;text-align:center;
+}
+.slider-desc{font-size:13px;color:var(--ink-soft);margin-top:6px;min-height:18px}
+
+/* fase-cards */
+.fcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.fcards{grid-template-columns:1fr}}
+.fcard{position:relative;display:block}
+.fcard input{position:absolute;opacity:0}
+.fcard > div{
+  border:1.5px solid var(--line);border-radius:13px;padding:14px;cursor:pointer;background:#fff;
+  transition:all .15s ease;height:100%;
+}
+.fcard .num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--unipa-blue);letter-spacing:.12em;border:none;padding:0;background:transparent;height:auto}
+.fcard b{display:block;font-size:14px;color:var(--bordeaux-deep);margin:4px 0 3px}
+.fcard small{font-size:12px;color:var(--ink-soft)}
+.fcard input:checked + div{border-color:var(--lime);background:var(--lime-soft);box-shadow:0 0 0 1px var(--lime)}
+.fcard input:focus-visible + div{box-shadow:0 0 0 3px rgba(175,203,46,.45)}
+
+/* nav */
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:30px;gap:12px}
+.btn{
+  font-family:'Archivo',sans-serif;font-variation-settings:'wght' 700;font-size:15px;
+  padding:13px 30px;border-radius:999px;border:none;cursor:pointer;transition:all .15s ease;
+}
+.btn-primary{background:var(--bordeaux);color:#fff}
+.btn-primary:hover{background:var(--bordeaux-deep);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.6;cursor:wait;transform:none}
+.btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--unipa-blue);color:var(--unipa-blue)}
+.btn:focus-visible{outline:3px solid rgba(14,76,124,.35);outline-offset:2px}
+.err{color:#B3261E;font-size:12.5px;margin-top:6px;display:none}
+.field.invalid .err{display:block}
+.field.invalid input[type=text],.field.invalid input[type=email],.field.invalid select{border-color:#B3261E}
+
+/* privacy */
+.privacy{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:13px 14px;cursor:pointer}
+.privacy input{margin-top:3px;accent-color:var(--unipa-blue);width:16px;height:16px;flex-shrink:0}
+
+/* thanks */
+.thanks{text-align:center;padding:22px 0}
+.thanks .check{
+  width:78px;height:78px;border-radius:50%;background:var(--lime);margin:0 auto 22px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 10px var(--lime-soft);
+}
+.thanks .check svg{width:38px;height:38px;stroke:var(--bordeaux-deep);stroke-width:3;fill:none}
+.thanks h2{font-family:'Archivo',sans-serif;font-variation-settings:'wdth' 108,'wght' 800;font-size:28px;color:var(--bordeaux-deep);margin-bottom:10px}
+.thanks p{color:var(--ink-soft);max-width:46ch;margin:0 auto 6px}
+.thanks .next{
+  font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--unipa-orange);margin-top:16px;
+}
+
+footer{
+  background:var(--unipa-blue-deep);color:rgba(255,255,255,.85);
+  text-align:center;padding:32px 24px;font-size:12.5px;
+}
+footer .mono{letter-spacing:.12em;color:var(--lime)}
+footer .row{max-width:1080px;margin:0 auto}
+</style>
+</head>
+<body>
+
+<!-- ============ BRAND BAR ============ -->
+<div class="brandbar">
+  <div class="brandbar-inner">
+    <div class="brand-group">
+      <a href="https://bi-rex.it/" target="_blank" rel="noopener" title="Vai al sito BI-REX" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+        <img src="https://bi-rex.it/wp-content/uploads/2023/05/Logo-pos-1.png"
+             alt="BI-REX — Big Data Innovation & Research Excellence"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+        <span class="brand-fallback birex">BI-REX</span>
+      </a>
+      <span class="brand-x">×</span>
+      <img class="unipa" src="https://www.unipa.it/.content/immagini/hp_new/logo-unipa-2023.png"
+           alt="Università degli Studi di Palermo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+      <span class="brand-fallback unipa">UNIPA</span>
+    </div>
+    <div class="brand-tag">Access to EU Funds<br>Programma 2026</div>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Competence Center Industria 4.0 <span class="sep">×</span> Ateneo di Palermo</div>
+    <h1>Access to<br>EU Funds
+      <span class="thin">Dalla vostra ricerca a un progetto europeo finanziato, insieme.</span>
+    </h1>
+    <p class="hero-sub">
+      BI-REX, centro di competenza in Big Data e AI, porta con l'Università di Palermo un percorso
+      strutturato per trasformare le linee di ricerca dei dipartimenti in proposte competitive su
+      Horizon Europe e gli altri programmi UE di interesse.
+      Vogliamo partire da te: <strong>raccontaci in 5 minuti la tua esperienza e i tuoi interessi.</strong>
+    </p>
+    <div class="hero-meta">
+      <div class="hm"><b>4</b><span>Fasi operative</span></div>
+      <div class="hm"><b>5<span style="font-size:.55em"> MIN</span></b><span>Per rispondere</span></div>
+      <div class="hm"><b>16</b><span>Dipartimenti coinvolti</span></div>
+    </div>
+    <a class="hero-cta" href="#form">Inizia il questionario <span class="mono">→</span></a>
+  </div>
+  <svg class="waves" viewBox="0 0 1440 230" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,140 C240,60 420,200 720,130 C1020,60 1200,190 1440,110"/>
+    <path d="M0,152 C240,74 420,208 720,142 C1020,74 1200,198 1440,122"/>
+    <path class="orange" d="M0,164 C240,88 420,216 720,154 C1020,88 1200,206 1440,134"/>
+    <path d="M0,176 C240,102 420,224 720,166 C1020,102 1200,214 1440,146"/>
+    <path d="M0,188 C240,116 420,232 720,178 C1020,116 1200,222 1440,158"/>
+    <path class="orange" d="M0,200 C240,130 420,240 720,190 C1020,130 1200,230 1440,170"/>
+    <path d="M0,212 C240,144 420,248 720,202 C1020,144 1200,238 1440,182"/>
+  </svg>
+</header>
+
+<!-- ============ FASI ============ -->
+<section class="phases" aria-label="Le quattro fasi del progetto">
+  <div class="phases-grid">
+    <div class="phase"><div class="num">Fase 01</div><h3>Action Plan</h3><p>Allineiamo le tue linee di ricerca alle priorità europee e costruiamo la strategia.</p></div>
+    <div class="phase"><div class="num">Fase 02</div><h3>Industrial Project Labs</h3><p>Ricerca + industria + BI-REX allo stesso tavolo per validare i concept progettuali.</p></div>
+    <div class="phase"><div class="num">Fase 03</div><h3>Training on the job</h3><p>Scriviamo la proposta insieme, con revisione continua fino alla submission.</p></div>
+    <div class="phase"><div class="num">Fase 04</div><h3>Networking</h3><p>Analisi dei key player europei, brokerage events e ingresso nei consorzi giusti.</p></div>
+  </div>
+</section>
+
+<p class="intro-note">Le tue risposte ci servono per <strong>disegnare il percorso sui dipartimenti UniPa</strong>: gli Industrial Project Labs e le attività di training partiranno dalle aree con più interesse.</p>
+
+<!-- ============ FORM ============ -->
+<main class="form-wrap" id="form">
+  <div class="progress-shell" aria-hidden="true">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label"><span id="stepLabel">Step 1 di 4</span><span id="stepPct">25%</span></div>
+  </div>
+  <div class="pipeline" id="pipeline" aria-hidden="true">
+    <div class="pipe-step active" data-s="1"><div class="pipe-dot">1</div><div class="pipe-label">Chi sei</div></div>
+    <div class="pipe-step" data-s="2"><div class="pipe-dot">2</div><div class="pipe-label">Esperienza</div></div>
+    <div class="pipe-step" data-s="3"><div class="pipe-dot">3</div><div class="pipe-label">Interessi</div></div>
+    <div class="pipe-step" data-s="4"><div class="pipe-dot">4</div><div class="pipe-label">Kick-off</div></div>
+  </div>
+
+  <div class="card">
+    <form id="survey" novalidate>
+
+      <!-- STEP 1 -->
+      <section class="step visible" data-step="1">
+        <div class="step-eyebrow">Step 1 · Scouting</div>
+        <h2>Chi sei</h2>
+        <p class="lead">Qualche informazione per capire da quale parte dell'ateneo arrivi.</p>
+
+        <div class="field" data-req>
+          <label class="flabel" for="nome">Nome e cognome</label>
+          <input type="text" id="nome" name="nome" autocomplete="name">
+          <div class="err">Inserisci il tuo nome.</div>
+        </div>
+        <div class="field" data-req data-type="email">
+          <label class="flabel" for="email">Email istituzionale</label>
+          <input type="email" id="email" name="email" placeholder="nome.cognome@unipa.it" autocomplete="email">
+          <div class="err">Inserisci un indirizzo email valido.</div>
+        </div>
+        <div class="field" data-req>
+          <label class="flabel" for="dip">Dipartimento</label>
+          <select id="dip" name="dipartimento">
+            <option value="">Seleziona…</option>
+            <option>Ingegneria</option>
+            <option>Fisica e Chimica – E. Segrè</option>
+            <option>Matematica e Informatica</option>
+            <option>Scienze e Tecnologie Biologiche, Chimiche e Farmaceutiche</option>
+            <option>Scienze Agrarie, Alimentari e Forestali</option>
+            <option>Scienze della Terra e del Mare</option>
+            <option>Scienze Economiche, Aziendali e Statistiche</option>
+            <option>Architettura</option>
+            <option>Giurisprudenza</option>
+            <option>Culture e Società</option>
+            <option>Scienze Umanistiche</option>
+            <option>Scienze Psicologiche, Pedagogiche, dell'Esercizio Fisico e della Formazione</option>
+            <option>Area Medica (PROMISE / BiND / Di.Chir.On.S.)</option>
+            <option>Altro</option>
+          </select>
+          <div class="err">Seleziona il tuo dipartimento.</div>
+        </div>
+        <div class="field" data-req>
+          <label class="flabel">Ruolo</label>
+          <div class="chips blue" role="group" aria-label="Ruolo">
+            <label class="chip"><input type="radio" name="ruolo" value="Dottorando/a"><span>Dottorando/a</span></label>
+            <label class="chip"><input type="radio" name="ruolo" value="Assegnista"><span>Assegnista</span></label>
+            <label class="chip"><input type="radio" name="ruolo" value="RTD/RTT"><span>RTD-A / RTD-B / RTT</span></label>
+            <label class="chip"><input type="radio" name="ruolo" value="Prof. Associato"><span>Prof. Associato</span></label>
+            <label class="chip"><input type="radio" name="ruolo" value="Prof. Ordinario"><span>Prof. Ordinario</span></label>
+            <label class="chip"><input type="radio" name="ruolo" value="Personale TA / Grant office"><span>Personale TA / Grant office</span></label>
+          </div>
+          <div class="err">Seleziona il tuo ruolo.</div>
+        </div>
+        <div class="field">
+          <label class="flabel">Macro-area ERC <span class="opt">(opzionale)</span></label>
+          <div class="chips lime" role="group" aria-label="Macro-area ERC">
+            <label class="chip"><input type="radio" name="erc" value="PE"><span>PE · Physical Sciences &amp; Engineering</span></label>
+            <label class="chip"><input type="radio" name="erc" value="LS"><span>LS · Life Sciences</span></label>
+            <label class="chip"><input type="radio" name="erc" value="SH"><span>SH · Social Sciences &amp; Humanities</span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="step" data-step="2">
+        <div class="step-eyebrow">Step 2 · Analisi funzionale</div>
+        <h2>La tua esperienza con i fondi europei</h2>
+        <p class="lead">Nessuna risposta è quella "giusta": ci serve la fotografia reale di partenza.</p>
+
+        <div class="field">
+          <label class="flabel" for="fam">Quanto ti senti familiare con Horizon Europe e i programmi UE?</label>
+          <div class="slider-row">
+            <input type="range" id="fam" name="familiarita" min="1" max="5" value="3" step="1"
+                   aria-describedby="famDesc">
+            <div class="slider-val" id="famVal">3</div>
+          </div>
+          <div class="slider-desc" id="famDesc">Ne ho una conoscenza generale.</div>
+        </div>
+
+        <div class="field">
+          <label class="flabel">Quali programmi conosci o segui? <span class="opt">(più risposte)</span></label>
+          <div class="chips" role="group">
+            <label class="chip"><input type="checkbox" name="programmi" value="Horizon Europe – Pillar II"><span>Horizon Europe · Pillar II</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="ERC"><span>ERC</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="MSCA"><span>MSCA</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="EIC"><span>EIC</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="Digital Europe"><span>Digital Europe</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="European Defence Fund"><span>European Defence Fund</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="PNRR"><span>PNRR</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="Interreg / LIFE / Erasmus+"><span>Interreg / LIFE / Erasmus+</span></label>
+            <label class="chip"><input type="checkbox" name="programmi" value="Nessuno"><span>Nessuno di questi</span></label>
+          </div>
+        </div>
+
+        <div class="field" data-req>
+          <label class="flabel">Hai già partecipato a una proposta europea?</label>
+          <div class="rcards">
+            <label class="rcard"><input type="radio" name="partecipazione" value="Mai">
+              <div><b>Mai, finora</b><small>È esattamente il motivo per cui questo progetto esiste.</small></div></label>
+            <label class="rcard"><input type="radio" name="partecipazione" value="Proposta presentata non finanziata">
+              <div><b>Sì, ma senza finanziamento</b><small>Ho contribuito a proposte presentate ma non selezionate.</small></div></label>
+            <label class="rcard"><input type="radio" name="partecipazione" value="Partner in progetto finanziato">
+              <div><b>Sì, come partner</b><small>Ho lavorato in almeno un progetto europeo finanziato.</small></div></label>
+            <label class="rcard"><input type="radio" name="partecipazione" value="Coordinatore / PI">
+              <div><b>Sì, come coordinatore o PI</b><small>Ho coordinato una proposta o un progetto finanziato.</small></div></label>
+          </div>
+          <div class="err">Seleziona un'opzione.</div>
+        </div>
+
+        <div class="field">
+          <label class="flabel">Cosa ti frena di più oggi? <span class="opt">(più risposte)</span></label>
+          <div class="chips" role="group">
+            <label class="chip"><input type="checkbox" name="ostacoli" value="Non so orientarmi tra le call"><span>Orientarmi tra le call</span></label>
+            <label class="chip"><input type="checkbox" name="ostacoli" value="Mancanza di rete/consorzi"><span>Mancanza di rete e consorzi</span></label>
+            <label class="chip"><input type="checkbox" name="ostacoli" value="Tempo per scrivere"><span>Tempo per scrivere</span></label>
+            <label class="chip"><input type="checkbox" name="ostacoli" value="Competenze di proposal writing"><span>Competenze di proposal writing</span></label>
+            <label class="chip"><input type="checkbox" name="ostacoli" value="Distanza dal mondo industriale"><span>Distanza dal mondo industriale</span></label>
+            <label class="chip"><input type="checkbox" name="ostacoli" value="Aspetti amministrativi/budget"><span>Aspetti amministrativi e budget</span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="step" data-step="3">
+        <div class="step-eyebrow">Step 3 · Idea creation</div>
+        <h2>I tuoi interessi</h2>
+        <p class="lead">Su cosa vorresti costruire un progetto europeo — e con quale parte del percorso.</p>
+
+        <div class="field" data-req data-min="1">
+          <label class="flabel">Aree tematiche di interesse <span class="opt">(più risposte)</span></label>
+          <div class="chips lime" role="group">
+            <label class="chip"><input type="checkbox" name="aree" value="AI e Big Data"><span>AI &amp; Big Data</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Manufacturing avanzato"><span>Manufacturing avanzato</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Robotica"><span>Robotica</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Energia e sostenibilità"><span>Energia &amp; sostenibilità</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Materiali avanzati"><span>Materiali avanzati</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Salute e biotech"><span>Salute &amp; biotech</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Quantum e HPC"><span>Quantum &amp; HPC</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Aerospazio e difesa"><span>Aerospazio &amp; difesa</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Agrifood e mare"><span>Agrifood &amp; mare</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Beni culturali e società"><span>Beni culturali &amp; società</span></label>
+            <label class="chip"><input type="checkbox" name="aree" value="Altro"><span>Altro</span></label>
+          </div>
+          <div class="err">Seleziona almeno un'area.</div>
+        </div>
+
+        <div class="field" data-req data-min="1">
+          <label class="flabel">Quali fasi del percorso ti attraggono di più? <span class="opt">(più risposte)</span></label>
+          <div class="fcards" role="group">
+            <label class="fcard"><input type="checkbox" name="fasi" value="Action Plan">
+              <div><div class="num">FASE 01</div><b>Action Plan</b><small>Capire dove posizionare la mia ricerca rispetto alle priorità UE.</small></div></label>
+            <label class="fcard"><input type="checkbox" name="fasi" value="Industrial Project Labs">
+              <div><div class="num">FASE 02</div><b>Industrial Project Labs</b><small>Co-progettare con imprese e validare le idee.</small></div></label>
+            <label class="fcard"><input type="checkbox" name="fasi" value="Training on the job">
+              <div><div class="num">FASE 03</div><b>Training on the job</b><small>Imparare a scrivere proposte lavorando su una vera.</small></div></label>
+            <label class="fcard"><input type="checkbox" name="fasi" value="Networking">
+              <div><div class="num">FASE 04</div><b>Networking</b><small>Entrare nei consorzi europei e nei brokerage events.</small></div></label>
+          </div>
+          <div class="err">Seleziona almeno una fase.</div>
+        </div>
+
+        <div class="field" data-req>
+          <label class="flabel">Hai già un'idea progettuale nel cassetto?</label>
+          <div class="rcards">
+            <label class="rcard"><input type="radio" name="idea" value="Sì, definita">
+              <div><b>Sì, abbastanza definita</b><small>So già cosa vorrei proporre.</small></div></label>
+            <label class="rcard"><input type="radio" name="idea" value="Embrionale">
+              <div><b>Embrionale</b><small>Ho un'intuizione ma va strutturata.</small></div></label>
+            <label class="rcard"><input type="radio" name="idea" value="No, ma vorrei svilupparne una">
+              <div><b>Non ancora</b><small>Ma vorrei svilupparne una con il supporto giusto.</small></div></label>
+          </div>
+          <div class="err">Seleziona un'opzione.</div>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="step" data-step="4">
+        <div class="step-eyebrow">Step 4 · Kick-off</div>
+        <h2>Costruiamo insieme il percorso</h2>
+        <p class="lead">Ultime due cose e abbiamo finito.</p>
+
+        <div class="field" data-req>
+          <label class="flabel">Ti interesserebbe partecipare a un Industrial Project Lab a Palermo?</label>
+          <div class="chips blue" role="group">
+            <label class="chip"><input type="radio" name="lab" value="Sì, in presenza"><span>Sì, in presenza</span></label>
+            <label class="chip"><input type="radio" name="lab" value="Sì, online"><span>Sì, online</span></label>
+            <label class="chip"><input type="radio" name="lab" value="Sì, formato misto"><span>Sì, formato misto</span></label>
+            <label class="chip"><input type="radio" name="lab" value="Non ora"><span>Non in questo momento</span></label>
+          </div>
+          <div class="err">Seleziona un'opzione.</div>
+        </div>
+
+        <div class="field">
+          <label class="flabel" for="note">C'è qualcosa che vuoi dirci? <span class="opt">(opzionale)</span></label>
+          <textarea id="note" name="note" placeholder="Un tema che ti sta a cuore, una collaborazione che cerchi, una domanda…"></textarea>
+        </div>
+
+        <div class="field" data-req data-type="check">
+          <label class="privacy">
+            <input type="checkbox" name="privacy" value="ok">
+            <span>Acconsento al trattamento dei dati forniti da parte di BI-REX e dell'Università degli Studi di Palermo ai soli fini dell'organizzazione delle attività del progetto Access to EU Funds, ai sensi del Reg. UE 2016/679 (GDPR).</span>
+          </label>
+          <div class="err">Il consenso è necessario per inviare le risposte.</div>
+        </div>
+      </section>
+
+      <!-- THANK YOU -->
+      <section class="step" data-step="5">
+        <div class="thanks">
+          <div class="check"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="4 13 10 19 20 6"/></svg></div>
+          <h2>GO! Risposte inviate.</h2>
+          <p>Grazie per il tuo tempo. Il team BI-REX × UniPa analizzerà le risposte per costruire il calendario dei Lab e delle attività di training.</p>
+          <p class="next">Prossimo step · Ti contatteremo sulla tua email istituzionale</p>
+        </div>
+      </section>
+
+      <div class="nav" id="nav">
+        <button type="button" class="btn btn-ghost" id="btnBack" style="visibility:hidden">← Indietro</button>
+        <button type="button" class="btn btn-primary" id="btnNext">Avanti →</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <div class="row">
+    <span class="mono">ACCESS TO EU FUNDS</span><br>
+    Un'iniziativa BI-REX — Big Data Innovation &amp; Research Excellence · Competence Center Industria 4.0<br>
+    in collaborazione con l'Università degli Studi di Palermo · Sede BI-REX Sicilia: Viale delle Scienze, Ed. 16, Palermo
+  </div>
+</footer>
+
+<script>
+/* ====== CONFIG ====== */
+const SUBMIT_ENDPOINT = "https://default301908d7f2c9423e99713852d09c07.88.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/17/workflows/b8801fce2235432982d30bef105bd7ae/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=TkeaCvgu-4De7gz_ce9Oe65BkzM7r6UqeWWSGPZLpoM";
+/* ====== WIZARD ====== */
+let current = 1;
+const TOTAL = 4;
+const steps = document.querySelectorAll('.step');
+const pipeSteps = document.querySelectorAll('.pipe-step');
+const btnNext = document.getElementById('btnNext');
+const btnBack = document.getElementById('btnBack');
+const nav = document.getElementById('nav');
+const fill = document.getElementById('progressFill');
+const stepLabel = document.getElementById('stepLabel');
+const stepPct = document.getElementById('stepPct');
+
+function show(n){
+  steps.forEach(s => s.classList.toggle('visible', +s.dataset.step === n));
+  pipeSteps.forEach(p => {
+    const s = +p.dataset.s;
+    p.classList.toggle('active', s === n);
+    p.classList.toggle('done', s < n);
+  });
+  const pct = n === 5 ? 100 : Math.round(n / TOTAL * 100);
+  fill.style.width = pct + '%';
+  stepLabel.textContent = n === 5 ? 'Completato' : `Step ${n} di ${TOTAL}`;
+  stepPct.textContent = pct + '%';
+  btnBack.style.visibility = (n === 1 || n === 5) ? 'hidden' : 'visible';
+  btnNext.textContent = n === TOTAL ? 'Invia le risposte' : 'Avanti →';
+  nav.style.display = n === 5 ? 'none' : 'flex';
+  if(n === 5) pipeSteps.forEach(p => p.classList.add('done'));
+  document.getElementById('form').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function validate(n){
+  let ok = true;
+  const sec = document.querySelector(`.step[data-step="${n}"]`);
+  sec.querySelectorAll('.field[data-req]').forEach(f => {
+    f.classList.remove('invalid');
+    let valid = true;
+    const input = f.querySelector('input[type=text],input[type=email],select,textarea');
+    if(input){
+      valid = input.value.trim().length > 0;
+      if(valid && f.dataset.type === 'email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+    } else if(f.dataset.type === 'check'){
+      valid = f.querySelector('input[type=checkbox]').checked;
+    } else {
+      const boxes = f.querySelectorAll('input[type=radio],input[type=checkbox]');
+      const min = +(f.dataset.min || 1);
+      valid = [...boxes].filter(b => b.checked).length >= min;
+    }
+    if(!valid){ f.classList.add('invalid'); ok = false; }
+  });
+  return ok;
+}
+
+btnNext.addEventListener('click', async () => {
+  if(!validate(current)){
+    document.querySelector(`.step[data-step="${current}"] .field.invalid`)?.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  if(current < TOTAL){ current++; show(current); return; }
+  btnNext.disabled = true; btnNext.textContent = 'Invio…';
+  const data = collect();
+  try{
+    if(SUBMIT_ENDPOINT){
+      // mode 'no-cors' + text/plain: la richiesta parte senza preflight CORS,
+      // compatibile con Power Automate (HTTP trigger) e Google Apps Script.
+      await fetch(SUBMIT_ENDPOINT, {
+        method:'POST',
+        mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(data)
+      });
+    } else {
+      console.log('[DEMO MODE] payload:', data);
+    }
+  }catch(e){ console.error('Invio fallito:', e); }
+  current = 5; show(5);
+});
+
+btnBack.addEventListener('click', () => { if(current > 1){ current--; show(current); } });
+
+/* Invio con Enter sui campi testo (tranne textarea) */
+document.getElementById('survey').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.tagName !== 'TEXTAREA'){
+    e.preventDefault();
+    btnNext.click();
+  }
+});
+
+function collect(){
+  const fd = new FormData(document.getElementById('survey'));
+  const multi = ['programmi','ostacoli','aree','fasi'];
+  const out = { timestamp: new Date().toISOString() };
+  for(const [k] of fd.entries()){
+    if(multi.includes(k)) out[k] = fd.getAll(k);
+    else out[k] = fd.get(k);
+  }
+  return out;
+}
+
+/* slider descrizioni */
+const famDescs = {
+  1:"Territorio quasi sconosciuto — perfetto, si parte da qui.",
+  2:"Ne ho sentito parlare, ma non ci ho mai messo le mani.",
+  3:"Ne ho una conoscenza generale.",
+  4:"Conosco bene i meccanismi delle call.",
+  5:"Ci lavoro regolarmente."
+};
+const fam = document.getElementById('fam');
+fam.addEventListener('input', () => {
+  document.getElementById('famVal').textContent = fam.value;
+  document.getElementById('famDesc').textContent = famDescs[fam.value];
+});
+</script>
+</body>
+</html>
