@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Save the date · Access to EU Funds — Evento di apertura · BI-REX × Università di Palermo</title>
+<title>Save The Date | Access to EU funds</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -86,8 +86,8 @@ body{
 h1{
   font-family:'Archivo',sans-serif;
   font-variation-settings:'wdth' 115,'wght' 850;
-  font-size:clamp(42px,7.5vw,84px);
-  line-height:.98;letter-spacing:-.015em;max-width:12ch;
+  font-size:clamp(34px,6.2vw,74px);
+  line-height:1;letter-spacing:-.015em;
 }
 h1 .thin{
   font-variation-settings:'wdth' 82,'wght' 300;display:block;
@@ -345,6 +345,7 @@ footer .row{max-width:1080px;margin:0 auto}
 .slots .chip span{display:block;text-align:center;font-variant-numeric:tabular-nums}
 @media(max-width:560px){.slots{grid-template-columns:repeat(2,1fr)}}
 .subfield{margin-top:-6px}
+h1 .pipe{color:var(--lime);font-variation-settings:'wdth' 80,'wght' 300}
 </style>
 </head>
 <body>
@@ -372,9 +373,9 @@ footer .row{max-width:1080px;margin:0 auto}
 <!-- ============ HERO ============ -->
 <header class="hero">
   <div class="hero-inner">
-    <div class="eyebrow">Save the date <span class="sep">×</span> Evento di apertura</div>
-    <h1>Access to<br>EU Funds
-      <span class="thin">L'evento di apertura del programma BI-REX × Università di Palermo.</span>
+    <div class="eyebrow">BI-REX <span class="sep">×</span> Università di Palermo</div>
+    <h1>Save The Date <span class="pipe">|</span><br>Access to EU funds
+      <span class="thin">L'evento di apertura del programma.</span>
     </h1>
 
     <div class="std">
@@ -384,10 +385,8 @@ footer .row{max-width:1080px;margin:0 auto}
       </div>
       <dl class="std-info">
         <div><dt>Quando</dt><dd>Lunedì 9 novembre 2026, dalle 9:00 alle 13:00</dd></div>
-        <div><dt>Dove</dt><dd>Università degli Studi di Palermo<br>
-          <!-- COMPILARE: scrivere aula e dipartimento dentro gli span; finché sono vuoti si vede una riga tratteggiata -->
-          Aula <span class="blank" id="evAula"></span><br>
-          Dipartimento <span class="blank" id="evDip"></span>
+        <div><dt>Dove</dt><dd>Museo Storico dei Motori e dei Meccanismi<br>
+          Università degli Studi di Palermo, Edificio 8, Viale delle Scienze, Palermo
         </dd></div>
       </dl>
     </div>
@@ -807,10 +806,7 @@ document.querySelectorAll('input[name="incontro_1to1"]').forEach(r => r.addEvent
 
 /* ====== AGGIUNGI AL CALENDARIO (.ics) ====== */
 function downloadICS(){
-  const aula = document.getElementById('evAula').textContent.trim();
-  const dip  = document.getElementById('evDip').textContent.trim();
-  const loc = ['Università degli Studi di Palermo', aula && 'Aula ' + aula, dip && 'Dipartimento ' + dip]
-                .filter(Boolean).join(', ');
+  const loc = 'Museo Storico dei Motori e dei Meccanismi, Università degli Studi di Palermo, Edificio 8, Viale delle Scienze, Palermo';
   const esc = t => t.replace(/[\\,;]/g, m => '\\' + m);
   const stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
   const ics = [
