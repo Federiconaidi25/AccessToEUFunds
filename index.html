@@ -599,15 +599,15 @@ h1 .pipe{color:var(--lime);font-variation-settings:'wdth' 80,'wght' 300}
       <section class="step" data-step="4">
         <div class="step-eyebrow">Step 4 · Incontri 1:1</div>
         <h2>Un incontro dedicato alla tua ricerca</h2>
-        <p class="lead">Dopo l'evento vorremmo incontrare le persone una per una: 30 minuti per parlare delle tue linee di ricerca e capire quali opportunità europee sono più adatte. Abbiamo pensato a mercoledì 11 novembre, dalle 14:00 alle 18:00.</p>
+        <p class="lead">Dopo l'evento vorremmo incontrare le persone una per una: 30 minuti per parlare delle tue linee di ricerca e capire quali opportunità europee sono più adatte. Abbiamo pensato al pomeriggio di lunedì 9 novembre, dalle 14:00 alle 18:00, subito dopo l'evento.</p>
 
         <div class="field" data-req>
           <label class="flabel">Ti interessa un incontro 1:1 con il team BI-REX?</label>
           <div class="rcards">
-            <label class="rcard"><input type="radio" name="incontro_1to1" value="Sì, l'11 novembre">
-              <div><b>Sì, l'11 novembre va bene</b><small>Scegli qui sotto gli slot in cui sei disponibile.</small></div></label>
+            <label class="rcard"><input type="radio" name="incontro_1to1" value="Sì, il 9 novembre pomeriggio">
+              <div><b>Sì, il pomeriggio del 9 novembre va bene</b><small>Scegli qui sotto gli slot in cui sei disponibile.</small></div></label>
             <label class="rcard"><input type="radio" name="incontro_1to1" value="Sì, ma in un'altra data">
-              <div><b>Sì, ma l'11 novembre non riesco</b><small>Indicaci un'alternativa e ti ricontattiamo.</small></div></label>
+              <div><b>Sì, ma il 9 novembre pomeriggio non riesco</b><small>Indicaci un'alternativa e ti ricontattiamo.</small></div></label>
             <label class="rcard"><input type="radio" name="incontro_1to1" value="Non ora">
               <div><b>Non in questo momento</b><small>Potrai chiederlo anche più avanti.</small></div></label>
           </div>
@@ -615,8 +615,8 @@ h1 .pipe{color:var(--lime);font-variation-settings:'wdth' 80,'wght' 300}
         </div>
 
         <div class="field subfield" data-req data-min="1" id="slotField" hidden>
-          <label class="flabel">In quali slot sei disponibile l'11 novembre? <span class="opt">(seleziona tutti quelli che ti vanno bene)</span></label>
-          <div class="chips blue slots" role="group" aria-label="Slot disponibili 11 novembre">
+          <label class="flabel">In quali slot sei disponibile lunedì 9 novembre? <span class="opt">(seleziona tutti quelli che ti vanno bene)</span></label>
+          <div class="chips blue slots" role="group" aria-label="Slot disponibili 9 novembre">
             <label class="chip"><input type="checkbox" name="slot_1to1" value="14:00–14:30"><span>14:00 – 14:30</span></label>
             <label class="chip"><input type="checkbox" name="slot_1to1" value="14:30–15:00"><span>14:30 – 15:00</span></label>
             <label class="chip"><input type="checkbox" name="slot_1to1" value="15:00–15:30"><span>15:00 – 15:30</span></label>
@@ -755,8 +755,8 @@ btnNext.addEventListener('click', async () => {
     document.getElementById('thanksText').textContent = "Ci dispiace non vederti il 9 novembre. Riceverai i materiali dell'evento e le date dei prossimi Lab.";
     document.getElementById('thanksIcs').style.display = 'none';
   }
-  if(data.incontro_1to1 === "Sì, l'11 novembre"){
-    document.getElementById('thanksText').textContent += " Per l'incontro 1:1 dell'11 novembre ti confermeremo uno degli slot che hai indicato.";
+  if(data.incontro_1to1 === "Sì, il 9 novembre pomeriggio"){
+    document.getElementById('thanksText').textContent += " Per l'incontro 1:1 del pomeriggio ti confermeremo uno degli slot che hai indicato.";
   } else if(data.incontro_1to1 === "Sì, ma in un'altra data"){
     document.getElementById('thanksText').textContent += " Ti ricontatteremo per fissare l'incontro 1:1 in un'altra data.";
   }
@@ -778,9 +778,6 @@ function collect(){
   const multi = ['ostacoli','aree','fasi','slot_1to1'];
   const out = { timestamp: new Date().toISOString() };
   multi.forEach(k => out[k] = []); // i campi a scelta multipla arrivano sempre, anche vuoti
-  // Campi della versione precedente del questionario: inviati vuoti così il flow
-  // Power Automate esistente (schema "Analizza JSON") continua a funzionare senza modifiche.
-  Object.assign(out, { erc:'', familiarita:'', programmi:[], lab:'' });
   for(const [k] of fd.entries()){
     if(multi.includes(k)) out[k] = fd.getAll(k);
     else out[k] = fd.get(k);
@@ -798,7 +795,7 @@ document.querySelectorAll('input[name="incontro_1to1"]').forEach(r => r.addEvent
   const v = document.querySelector('input[name="incontro_1to1"]:checked').value;
   const slotField = document.getElementById('slotField');
   const altField = document.getElementById('altField');
-  slotField.hidden = v !== "Sì, l'11 novembre";
+  slotField.hidden = v !== "Sì, il 9 novembre pomeriggio";
   altField.hidden = v !== "Sì, ma in un'altra data";
   if(slotField.hidden){ slotField.classList.remove('invalid'); slotField.querySelectorAll('input').forEach(i => i.checked = false); }
   if(altField.hidden) document.getElementById('alt1to1').value = '';
